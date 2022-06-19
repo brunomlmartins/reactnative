@@ -1,16 +1,22 @@
-import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 import Task from './components/Task';
 import React, {useState} from 'react';
 
 
 export default function App() {
-
-  const[task, setTask ] = useState();
+  const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
 
-  const handleAddTask = () =>{
-    setTaskItems([...taskItems,task])
+  const handleAddTask = () => {
+    Keyboard.dismiss();
+    setTaskItems([...taskItems, task])
     setTask(null);
+  }
+
+  const completeTask = (index) => {
+    let itemsCopy = [...taskItems];
+    itemsCopy.splice(index, 1);
+    setTaskItems(itemsCopy);
   }
   return (
     <View style={styles.container}>
@@ -20,16 +26,22 @@ export default function App() {
         <Text style={styles.sectionTitle}>Lista de compras</Text>
 
         <View style={styles.items}>
-          {/* Tarefas aqui */}
-          <Task text={'text1'}/>
-          <Task text={'text2'}/>
+          {taskItems.map((item, index) => {
+            return (
+              <TouchableOpacity key={index} onPress={() => completeTask(index)}>
+
+                <Task  text ={item}></Task>
+
+              </TouchableOpacity>
+            )
+          })}
         </View>
 
       </View>
         <KeyboardAvoidingView style={styles.writeTaskWrapper}>
 
           <TextInput style={styles.input} placeholder={'Escrever falta'} value={task} onChangeText={text => setTask(text)}></TextInput>
-          <TouchableOpacity onPress={handleAddTask()}>
+          <TouchableOpacity onPress={() => handleAddTask()}>
             <View style={styles.addWrapper}>
               <Text style={styles.addText}>+</Text>
             </View>
